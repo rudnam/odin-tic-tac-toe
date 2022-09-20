@@ -25,9 +25,15 @@ const gameBoard = (() => {
         }
         return false;
     }
+    const clearBoard = () => {
+        board = ['','','',
+                 '','','',
+                 '','',''];
+    }
     return {getBoard,
             modifyBoard,
-            checkBoard};
+            checkBoard,
+            clearBoard};
 })();
 
 const Player = (name, mark) => {
@@ -42,11 +48,30 @@ const Game = (() => {
     let P1 = null;
     let P2 = null;
     let turn = null;
-    const start = (Player1,Player2) => {
+    const setup = () => {
+        if (P1 === null) {
+            const player1 = Player(document.querySelector('#name').value,document.querySelector('#mark').value);
+            P1 = player1;
+            gameStatus.innerText = 'Input player 2 info.';
+            document.querySelector('label[for=name]').innerText = 'Player 2 name:';
+            document.querySelector('label[for=mark]').innerText = 'Player 2 mark:';
+            document.querySelector('.setup').reset();
+            document.querySelector('#mark').value = '🤬';
+        } else if (P2 === null) {
+            const player2 = Player(document.querySelector('#name').value,document.querySelector('#mark').value);
+            P2 = player2;
+            document.querySelector('.setup').style.display = 'none';
+            document.querySelector('.board').style.display = 'grid';
+            Game.start(P1,P2);
+        }
+    }
+    const start = (a,b) => {
         if (!ongoing) {
+            gameBoard.clearBoard();
+            renderContent();
             ongoing = true;
-            P1 = Player1;
-            P2 = Player2;
+            P1 = a;
+            P2 = b;
             turn = P1;
             gameStatus.innerText = `${turn.getName()}'s turn.`;
             for (let i=0; i < 9; i++) {
@@ -70,12 +95,18 @@ const Game = (() => {
                 turn = turn.getName() === P1.getName() ? P2 : P1;
                 gameStatus.innerText = `${turn.getName()}'s turn.`;
             }
+            if (!ongoing) {
+                document.querySelector('#restart').style.display = 'block';
+            }
         }
     }
+    const restart = () => Game.start(P1,P2);
     const getTurn = () => turn.getName();
-    return {start,
+    return {setup,
+            start,
             move,
-            getTurn};
+            getTurn,
+            restart};
 })();
 
 function renderContent() {
@@ -85,8 +116,19 @@ function renderContent() {
     }
 }
 
+document.querySelector('#start').addEventListener('click', function() {
+    document.querySelector('.setup').style.display = 'flex';
+    gameStatus.style.display = 'inline';
+    document.querySelector('#start').style.display = 'none';
+});
 
-// test
-const test1 = Player('rudnam','🤣');
-const test2 = Player('bot','🤬');
-Game.start(test1, test2);
+document.querySelector("#confirm").addEventListener('click', function() {
+    if (document.querySelector("#name").value && document.querySelector("#mark").value) {
+        Game.setup();
+    }
+});
+
+document.querySelector('#restart').addEventListener('click', function() {
+    Game.restart();
+    document.querySelector('#restart').style.display = 'none';
+});

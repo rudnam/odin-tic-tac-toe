@@ -11,6 +11,13 @@
 <body>
     <main>
         <p class="title">Tic Tac Toe</p>
+        <form class="setup">
+            <label for="name">Player 1 name:</label>
+            <input type="text" name="name" id="name" maxlength="15" required>
+            <label for="mark">Player 1 mark:</label>
+            <input type="text" name="mark" id="mark" maxlength="2" value="🤣" required>
+            <button id="confirm" type="button">Confirm</button>
+        </form>
         <div class="board">
             <div class="cell" data-index="0"></div>
             <div class="cell vertical" data-index="1"></div>
@@ -22,7 +29,9 @@
             <div class="cell vertical" data-index="7"></div>
             <div class="cell" data-index="8"></div>
         </div>
-        <p class="status"></p>
+        <button id="restart">Restart</button>
+        <button id="start">Start game</button>
+        <p class="status">Input player 1 info.</p>
         <footer><a href="https://github.com/rudnam/odin-tic-tac-toe">Github</a></footer>
     </main>
 </body>
