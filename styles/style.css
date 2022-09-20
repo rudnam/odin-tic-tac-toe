@@ -41,7 +41,14 @@ main {
 
 .cell {
     font-size: 3rem;
+    height: 80px;
     text-align: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.cell:hover {
+    background-color: #26313d;
 }
 
 .cell.center {
