@@ -1,2 +1,5 @@
 # odin-tic-tac-toe
-The Odin Project: Tic Tac Toe
+#### Link: https://rudnam.github.io/odin-tic-tac-toe/
+## Description
+Project from [TOP](https://www.theodinproject.com/lessons/node-path-javascript-tic-tac-toe)
+- Factory function and Module Pattern practice
