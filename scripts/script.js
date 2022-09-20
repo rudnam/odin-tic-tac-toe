@@ -41,9 +41,11 @@ const Game = (() => {
         }
     }
     const move = index => {
-        gameBoard.modifyBoard(index,turn.getMark());
-        renderContent();
-        turn = turn.getName() === P1.getName() ? P2 : P1;
+        if (!gameBoard.getBoard()[index]) {
+            gameBoard.modifyBoard(index,turn.getMark());
+            renderContent();
+            turn = turn.getName() === P1.getName() ? P2 : P1;
+        }
     }
     const getTurn = () => turn.getName();
     return {start,
