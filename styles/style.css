@@ -42,6 +42,7 @@ main {
 .cell {
     font-size: 3rem;
     height: 80px;
+    width: 80px;
     text-align: center;
     cursor: pointer;
     user-select: none;
