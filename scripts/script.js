@@ -1,18 +1,33 @@
 // script.js
 const cells = document.querySelectorAll('.cell');
+const gameStatus = document.querySelector('.status');
 
 const gameBoard = (() => {
     let board = ['','','',
                  '','','',
                  '','',''];
+    let checks = [[0,1,2],[3,4,5],[6,7,8],
+                  [0,3,6],[1,4,7],[2,5,8],
+                  [0,4,8],[2,4,6]];
     const getBoard = () => board;
     const modifyBoard = (index, value) => {
         if (!board[index]) {
             board[index] = value;
         }
     }
+    const checkBoard = () => {
+        for (let i=0; i < checks.length; i++) {
+            if (board[checks[i][0]] === board[checks[i][1]] && board[checks[i][1]] == board[checks[i][2]]) {
+                if (board[checks[i][0]] !== '') {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     return {getBoard,
-            modifyBoard};
+            modifyBoard,
+            checkBoard};
 })();
 
 const Player = (name, mark) => {
@@ -33,6 +48,7 @@ const Game = (() => {
             P1 = Player1;
             P2 = Player2;
             turn = P1;
+            gameStatus.innerText = `${turn.getName()}'s turn.`;
             for (let i=0; i < 9; i++) {
                 cells[i].addEventListener('click', function() {
                     Game.move(cells[i].dataset.index);
@@ -41,10 +57,19 @@ const Game = (() => {
         }
     }
     const move = index => {
-        if (!gameBoard.getBoard()[index]) {
+        if (!gameBoard.getBoard()[index] && ongoing) {
             gameBoard.modifyBoard(index,turn.getMark());
             renderContent();
-            turn = turn.getName() === P1.getName() ? P2 : P1;
+            if (gameBoard.checkBoard()) {
+                gameStatus.innerText = `${turn.getName()} won!`;
+                ongoing = false;
+            } else if (!gameBoard.getBoard().includes('')) {
+                gameStatus.innerText = "It's a tie!";
+                ongoing = false;
+            } else {
+                turn = turn.getName() === P1.getName() ? P2 : P1;
+                gameStatus.innerText = `${turn.getName()}'s turn.`;
+            }
         }
     }
     const getTurn = () => turn.getName();
