@@ -1,4 +1,5 @@
 // script.js
+const cells = document.querySelectorAll('.cell');
 
 const gameBoard = (() => {
     let board = ['','','',
@@ -20,3 +21,12 @@ const Player = (name, mark) => {
     return {getName,
             move};
 };
+
+function renderContent() {
+    const board = gameBoard.getBoard();
+    for (let i=0; i < 9; i++) {
+        cells[i].innerText = board[i] ? board[i] : '😂';
+    }
+}
+
+renderContent();
