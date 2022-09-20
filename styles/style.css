@@ -114,7 +114,7 @@ button {
     padding: 10px;
 }
 
-button:hover {
+button:hover, button:focus {
     background-color: #26313d;
 }
 
@@ -131,4 +131,12 @@ input[type=text] {
 
 input[type=text]:focus {
     background-color: #26313d;
+}
+
+.highlight {
+    background-color: rgba(255, 255, 0, 0.288);
+}
+
+.highlight:hover {
+    background-color: rgba(255, 255, 120, 0.288);
 }

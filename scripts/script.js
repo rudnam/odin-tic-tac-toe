@@ -19,6 +19,9 @@ const gameBoard = (() => {
         for (let i=0; i < checks.length; i++) {
             if (board[checks[i][0]] === board[checks[i][1]] && board[checks[i][1]] == board[checks[i][2]]) {
                 if (board[checks[i][0]] !== '') {
+                    cells[checks[i][0]].classList.add('highlight');
+                    cells[checks[i][1]].classList.add('highlight');
+                    cells[checks[i][2]].classList.add('highlight');
                     return true;
                 }
             }
@@ -75,6 +78,9 @@ const Game = (() => {
             turn = P1;
             gameStatus.innerText = `${turn.getName()}'s turn.`;
             for (let i=0; i < 9; i++) {
+                if (cells[i].classList.contains('highlight')) {
+                    cells[i].classList.remove('highlight');
+                }
                 cells[i].addEventListener('click', function() {
                     Game.move(cells[i].dataset.index);
                 });
