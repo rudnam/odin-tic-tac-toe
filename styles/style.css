@@ -64,3 +64,16 @@ main {
     border-top: 3px solid #f7f7f7;
     border-bottom: 3px solid #f7f7f7;
 }
+
+footer {
+    margin-top: auto;
+    margin-bottom: 20px;
+}
+
+footer a {
+    color: #f7f7f7;
+}
+
+footer a:hover {
+    color:#26313d;
+}
