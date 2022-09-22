@@ -94,8 +94,9 @@ main {
     display: none;
 }
 
-#restart {
+.buttons {
     display: none;
+    gap: 20px;
 }
 
 footer a {

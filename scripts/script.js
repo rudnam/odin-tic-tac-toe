@@ -83,19 +83,6 @@ const Game = (() => {
                 if (cells[i].classList.contains('highlight')) {
                     cells[i].classList.remove('highlight');
                 }
-                cells[i].addEventListener('click', function() {
-                    if (!gameBoard.getBoard()[i] && ongoing && !clickDisabled) {
-                        Game.move(cells[i].dataset.index);
-                        // bot
-                        if (document.querySelector('#bot').checked) {
-                            clickDisabled = true;
-                            setTimeout(function() {
-                                clickDisabled = false;
-                                bot.move();
-                            }, 300);
-                        }
-                    }
-                });
             }
         }
     }
@@ -113,20 +100,28 @@ const Game = (() => {
             gameStatus.innerText = `${turn.getName()}'s turn.`;
         }
         if (!ongoing) {
-            document.querySelector('#restart').style.display = 'block';
+            document.querySelector('.buttons').style.display = 'flex';
         }
+    }
+    const reset = () => {
+        ongoing = false;
+        P1 = null;
+        P2 = null;
+        turn = null;
+
     }
     const restart = () => Game.start(P1,P2);
     const getTurn = () => turn.getName();
-    const getOngoing = () => ongoing;
+    const isOngoing = () => ongoing;
     const getPInfo = () => P1 ? [P1.getName(), P1.getMark()] : null;
     return {getPInfo,
             setup,
             start,
             move,
             getTurn,
-            getOngoing,
-            restart};
+            isOngoing,
+            restart,
+            reset};
 })();
 
 function renderContent() {
@@ -135,6 +130,23 @@ function renderContent() {
         cells[i].innerText = board[i];
     }
 }
+
+for (let i=0; i < 9; i++) {
+    cells[i].addEventListener('click', function() {
+        if (!gameBoard.getBoard()[i] && Game.isOngoing() && !clickDisabled) {
+            Game.move(cells[i].dataset.index);
+            // bot
+            if (document.querySelector('#bot').checked) {
+                clickDisabled = true;
+                setTimeout(function() {
+                    clickDisabled = false;
+                    bot.move();
+                }, 300);
+            }
+        }
+    });
+}
+
 
 document.querySelector('#start').addEventListener('click', function() {
     document.querySelector('.setup').style.display = 'flex';
@@ -155,18 +167,35 @@ document.querySelector("#confirm").addEventListener('click', function() {
     }
     if (document.querySelector("#name").value && document.querySelector("#mark").value) {
         Game.setup();
+    } else {
+        gameStatus.innerText = 'Fill in both fields.'
     }
 });
 
 document.querySelector('#restart').addEventListener('click', function() {
     Game.restart();
-    document.querySelector('#restart').style.display = 'none';
+    document.querySelector('.buttons').style.display = 'none';
 });
+
+document.querySelector('#reset').addEventListener('click', function() {
+    Game.reset();
+    gameStatus.style.display = 'none';
+    gameStatus.innerText = 'Input player 1 info.'
+    document.querySelector('#start').style.display = 'block';
+    document.querySelector('.buttons').style.display = 'none';
+    document.querySelector('.board').style.display = 'none';
+    document.querySelector('label[for=name]').innerText = 'Player 1 name:';
+    document.querySelector('label[for=mark]').innerText = 'Player 1 mark:';
+    document.querySelector('.ai').style.display = 'none';
+    document.querySelector('.setup').reset();
+    document.querySelector('#mark').value = '🤣';
+    document.querySelector('#bot').checked = false;
+})
 
 // for bot
 const bot = (() => {
     const move = () => {
-        if (!gameBoard.getBoard().includes('') || !Game.getOngoing()) {
+        if (!gameBoard.getBoard().includes('') || !Game.isOngoing()) {
             return;
         }
         var index = Math.floor(Math.random() * 9);
