@@ -58,6 +58,7 @@ const Game = (() => {
             gameStatus.innerText = 'Input player 2 info.';
             document.querySelector('label[for=name]').innerText = 'Player 2 name:';
             document.querySelector('label[for=mark]').innerText = 'Player 2 mark:';
+            document.querySelector('.ai').style.display = 'block';
             document.querySelector('.setup').reset();
             document.querySelector('#mark').value = '🤬';
         } else if (P2 === null) {
@@ -82,36 +83,42 @@ const Game = (() => {
                     cells[i].classList.remove('highlight');
                 }
                 cells[i].addEventListener('click', function() {
-                    Game.move(cells[i].dataset.index);
+                    if (!gameBoard.getBoard()[i] && ongoing) {
+                        Game.move(cells[i].dataset.index);
+                        // bot
+                        if (document.querySelector('#bot').checked) {
+                            bot.move();
+                        }
+                    }
                 });
             }
         }
     }
     const move = index => {
-        if (!gameBoard.getBoard()[index] && ongoing) {
-            gameBoard.modifyBoard(index,turn.getMark());
-            renderContent();
-            if (gameBoard.checkBoard()) {
-                gameStatus.innerText = `${turn.getName()} won!`;
-                ongoing = false;
-            } else if (!gameBoard.getBoard().includes('')) {
-                gameStatus.innerText = "It's a tie!";
-                ongoing = false;
-            } else {
-                turn = turn.getName() === P1.getName() ? P2 : P1;
-                gameStatus.innerText = `${turn.getName()}'s turn.`;
-            }
-            if (!ongoing) {
-                document.querySelector('#restart').style.display = 'block';
-            }
+        gameBoard.modifyBoard(index,turn.getMark());
+        renderContent();
+        if (gameBoard.checkBoard()) {
+            gameStatus.innerText = `${turn.getName()} won!`;
+            ongoing = false;
+        } else if (!gameBoard.getBoard().includes('')) {
+            gameStatus.innerText = "It's a tie!";
+            ongoing = false;
+        } else {
+            turn = turn.getName() === P1.getName() ? P2 : P1;
+            gameStatus.innerText = `${turn.getName()}'s turn.`;
+        }
+        if (!ongoing) {
+            document.querySelector('#restart').style.display = 'block';
         }
     }
     const restart = () => Game.start(P1,P2);
     const getTurn = () => turn.getName();
+    const getOngoing = () => ongoing;
     return {setup,
             start,
             move,
             getTurn,
+            getOngoing,
             restart};
 })();
 
@@ -138,3 +145,18 @@ document.querySelector('#restart').addEventListener('click', function() {
     Game.restart();
     document.querySelector('#restart').style.display = 'none';
 });
+
+// for bot
+const bot = (() => {
+    const move = () => {
+        if (!gameBoard.getBoard().includes('') || !Game.getOngoing()) {
+            return;
+        }
+        var index = Math.floor(Math.random() * 9);
+        while (gameBoard.getBoard()[index]) {
+            index = Math.floor(Math.random() * 9);
+        }
+        Game.move(index);
+    }
+    return {move};
+})();
