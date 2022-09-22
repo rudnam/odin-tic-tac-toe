@@ -1,6 +1,7 @@
 // script.js
 const cells = document.querySelectorAll('.cell');
 const gameStatus = document.querySelector('.status');
+var clickDisabled = false;
 
 const gameBoard = (() => {
     let board = ['','','',
@@ -83,11 +84,15 @@ const Game = (() => {
                     cells[i].classList.remove('highlight');
                 }
                 cells[i].addEventListener('click', function() {
-                    if (!gameBoard.getBoard()[i] && ongoing) {
+                    if (!gameBoard.getBoard()[i] && ongoing && !clickDisabled) {
                         Game.move(cells[i].dataset.index);
                         // bot
                         if (document.querySelector('#bot').checked) {
-                            bot.move();
+                            clickDisabled = true;
+                            setTimeout(function() {
+                                clickDisabled = false;
+                                bot.move();
+                            }, 300);
                         }
                     }
                 });
@@ -114,7 +119,9 @@ const Game = (() => {
     const restart = () => Game.start(P1,P2);
     const getTurn = () => turn.getName();
     const getOngoing = () => ongoing;
-    return {setup,
+    const getPInfo = () => P1 ? [P1.getName(), P1.getMark()] : null;
+    return {getPInfo,
+            setup,
             start,
             move,
             getTurn,
@@ -136,6 +143,16 @@ document.querySelector('#start').addEventListener('click', function() {
 });
 
 document.querySelector("#confirm").addEventListener('click', function() {
+    if (Game.getPInfo()) {
+        if (document.querySelector('#name').value == Game.getPInfo()[0]) {
+            gameStatus.innerText = 'That name is already used.'
+            return;
+        }
+        if (document.querySelector("#mark").value == Game.getPInfo()[1]) {
+            gameStatus.innerText = 'That mark is already used.'
+            return;
+        }
+    }
     if (document.querySelector("#name").value && document.querySelector("#mark").value) {
         Game.setup();
     }
